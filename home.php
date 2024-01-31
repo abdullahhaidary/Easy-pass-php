@@ -10,6 +10,21 @@ $sql_user = "SELECT id FROM users WHERE username='$logininfo'";
 $result_user = $con->query($sql_user);
 $row_user = $result_user->fetch_assoc();
 $user_id = $row_user['id'];
+
+//select the location from the file
+$filePath = 'files/locations.txt';
+
+if (file_exists($filePath)) {
+    // Read the contents of the file and explode into an array
+    $selectedLocations = explode(',', file_get_contents($filePath));
+} else {
+    $selectedLocations = [];
+}
+$selectedLocationsString = implode("','", $selectedLocations);
+
+//end location selection from the fil
+
+
 ?>
 <html>
 <!--           GETS METHODS       -->
@@ -218,9 +233,9 @@ if (isset($_GET['deleteidpbl'])) {
             }
 
             if ($household != null) {
-                $sql = "SELECT * FROM $pd where hh=$household and Location!='$selected_location'";
+                $sql = "SELECT * FROM $pd WHERE hh = $household AND Location IN ('$selectedLocationsString')";
                 if ($logininfo == 'abdullah') {
-                    $sql = "SELECT * FROM $pd where hh=$household and Location!='$selected_location'";
+                    $sql = "SELECT * FROM $pd WHERE hh = $household AND Location IN ('$selectedLocationsString')";
                 }
             } else {
                 echo "<script type='text/javascript'>
@@ -285,6 +300,7 @@ if (isset($_GET['deleteidpbl'])) {
                                         <td><b>Phone Number</b></td>
                                         <td><b>Alternate Name</b></td>
                                         <td><b>Alternate Document</b></td>
+                                        <td><b>Location</b></td>
                                         <td><b>Guzar</b></td>";
                         echo "</tr>            
                                         <tr style='font-size: 14pt'>";
@@ -318,7 +334,8 @@ if (isset($_GET['deleteidpbl'])) {
                                         <td>" . $row['phone_number'] . "</td>
                                         <td>" . $alternate_name . "</td>
                          <td>" . $alternate_document . "</td>
-                         <td>" . $row['address'] . "</td>";
+                         <td>" . $row['address'] . "</td>
+                         <td>" . $row['Location'] . "</td>";
                         //                            }
                         if ($logininfo == 'abdullah' || $row['status'] != 3) {
                             if ($row['status'] == 0 && $logininfo != 'tarin') {
@@ -327,53 +344,53 @@ if (isset($_GET['deleteidpbl'])) {
                                 echo "<script>document.getElementById('household').disabled=true</script>";
                             }
                             ?>
-                                            <script>
-                                                <?php
-                                                if ($result->num_rows == 1) {
-                                                    ?>
-                                                    document.addEventListener('keydown',function(event) {
-                                                        if (event.shiftKey && event.key==='S') {
-                                                            receivedButton(<?php echo $row['pbl'] ?>);
-                                                        }
-                                                        if(event.shiftKey && event.key==='D'){
-                                                        FingerIssueBPL(<?php echo $row['pbl'] ?>);
-                                                        }
-                                                    });
-                                                    <?php
-                                                }
-                                                ?>
-                                                function receivedButton(pbl){
-                                                    document.getElementById('household').disabled='false';
-                                                    window.location.assign("home.php?addid="+ <?php echo $row['hh']; ?> + "& addidpbl=" + pbl + " & household="+ <?php echo $row['hh']; ?>);
-                                                }
-                                            </script>
+                                                                                    <script>
+                                                                                        <?php
+                                                                                        if ($result->num_rows == 1) {
+                                                                                            ?>
+                                                                                                    document.addEventListener('keydown',function(event) {
+                                                                                                        if (event.shiftKey && event.key==='S') {
+                                                                                                            receivedButton(<?php echo $row['pbl'] ?>);
+                                                                                                        }
+                                                                                                        if(event.shiftKey && event.key==='D'){
+                                                                                                        FingerIssueBPL(<?php echo $row['pbl'] ?>);
+                                                                                                        }
+                                                                                                    });
+                                                                                                    <?php
+                                                                                        }
+                                                                                        ?>
+                                                                                        function receivedButton(pbl){
+                                                                                            document.getElementById('household').disabled='false';
+                                                                                            window.location.assign("home.php?addid="+ <?php echo $row['hh']; ?> + "& addidpbl=" + pbl + " & household="+ <?php echo $row['hh']; ?>);
+                                                                                        }
+                                                                                    </script>
 
-                                            <!-- Not this one button -->
-                            <?php
-                            if ($row['status'] == 0 && $logininfo != 'tarin') {
-                                echo "<button style='font-size:16pt;cursor:pointer; float:right;' onclick='wrongHH();'>Wrong HH?</button>";
-                                ?>
-                                                <script>
-                                                    document.addEventListener('keydown',function(event) {
-                                                        if (event.shiftKey && event.key==='W') {
-                                                            wrongHH();
-                                                        }
-                                                    });
-                                                    function wrongHH(){
-                                                        var wrongHH=confirm("Are you sure?");
-                                                        if(wrongHH) {
-                                                            window.location.assign("home.php?notthisone=on");
-                                                        }
+                                                                                    <!-- Not this one button -->
+                                                                    <?php
+                                                                    if ($row['status'] == 0 && $logininfo != 'tarin') {
+                                                                        echo "<button style='font-size:16pt;cursor:pointer; float:right;' onclick='wrongHH();'>Wrong HH?</button>";
+                                                                        ?>
+                                                                                                <script>
+                                                                                                    document.addEventListener('keydown',function(event) {
+                                                                                                        if (event.shiftKey && event.key==='W') {
+                                                                                                            wrongHH();
+                                                                                                        }
+                                                                                                    });
+                                                                                                    function wrongHH(){
+                                                                                                        var wrongHH=confirm("Are you sure?");
+                                                                                                        if(wrongHH) {
+                                                                                                            window.location.assign("home.php?notthisone=on");
+                                                                                                        }
 
-                                                    }
+                                                                                                    }
 
 
-                                                </script>
-                                            <?php
-                            } else if ($row['status'] == 1 && $logininfo != 'tarin') {
-                                echo "<button class='receivebutton' onclick='deleteButton(" . $row['pbl'] . ");' style='cursor:pointer ;background-color: red;color:white;font-size:16pt;'>Delete</button>";
-                                $_distribuation_state = "done";
-                            }
+                                                                                                </script>
+                                                                                            <?php
+                                                                    } else if ($row['status'] == 1 && $logininfo != 'tarin') {
+                                                                        echo "<button class='receivebutton' onclick='deleteButton(" . $row['pbl'] . ");' style='cursor:pointer ;background-color: red;color:white;font-size:16pt;'>Delete</button>";
+                                                                        $_distribuation_state = "done";
+                                                                    }
                         }
                         if ($logininfo == 'tarin') {
                             $pbl = $row['pbl'];
@@ -384,52 +401,52 @@ if (isset($_GET['deleteidpbl'])) {
                             }
                         }
                         ?>
-                                        <script>
-                                            function deleteButton(pbl){var deletesure=window.confirm("delete the household from highlight?");
-                                                if(deletesure) {
-                                                    window.location.assign("home.php?deleteidpbl="+pbl+" & household=<?php echo $row['hh'] ?>");
+                                                                        <script>
+                                                                            function deleteButton(pbl){var deletesure=window.confirm("delete the household from highlight?");
+                                                                                if(deletesure) {
+                                                                                    window.location.assign("home.php?deleteidpbl="+pbl+" & household=<?php echo $row['hh'] ?>");
 
-                                                }
-                                            }
+                                                                                }
+                                                                            }
 
-                                            function FingerIssueBPL(pbl){
-                                                        window.location.assign("home.php?fingerissuebpl=" + pbl + " & household=<?php echo $row['hh'] ?>");
-                                            }
-                                        </script>
+                                                                            function FingerIssueBPL(pbl){
+                                                                                        window.location.assign("home.php?fingerissuebpl=" + pbl + " & household=<?php echo $row['hh'] ?>");
+                                                                            }
+                                                                        </script>
 
-                                    <?php
-                                    if ($logininfo == 'abdullah' && $row['status'] == 3) {
-                                        echo "<button style='font-size:16pt; cursor:pointer' class='receivebutton' 
+                                                                    <?php
+                                                                    if ($logininfo == 'abdullah' && $row['status'] == 3) {
+                                                                        echo "<button style='font-size:16pt; cursor:pointer' class='receivebutton' 
                             onclick=\"document.getElementById('household').disabled='false'\">
                             <a href='home.php?addid=" . $row['hh'] . " & addidpbl=" . $row['pbl'] . "& household=" . $row['hh'] . "&problem_remove' 
                              style='text-decoration: none'>Received</a></button>";
-                                    }
-                                    if ($logininfo == 'abdullah') {
-                                        echo "<button class='receivebutton' onclick='problem();'>Problem</button>";
-                                        ?>
-                                            <!--Javascript for problem button -->
-                                            <script>
-                                                function problem(){
-                                                    document.getElementById('household').disabled='false';
-                                                    var reason = prompt("Please Enter The Reason!");
-                                                    document.cookie = "reason="+reason;
-                                                    var problemsure=confirm("are you sure you want to put the person on the problem");
-                                                    if(problemsure==true){
-                                                        <?php
-                                                        echo "window.location.assign('home.php?addid=" . $row['hh'] . "& problem=" . $row['pbl'] . "& household=" . $row['hh'] . "');";
-                                                        ?>
-                                                    }else{
-                                                        alert("Not Added To Problem");
-                                                    }
-                                                }
-                                            </script>
-                                            <?php
-                                    }
-                                    echo " </tr>";
-                                    echo "</table>";
-                                    if ($_distribuation_state == "done") {
-                                        $_distribuation_state == "";
-                                    }
+                                                                    }
+                                                                    if ($logininfo == 'abdullah') {
+                                                                        echo "<button class='receivebutton' onclick='problem();'>Problem</button>";
+                                                                        ?>
+                                                                                    <!--Javascript for problem button -->
+                                                                                    <script>
+                                                                                        function problem(){
+                                                                                            document.getElementById('household').disabled='false';
+                                                                                            var reason = prompt("Please Enter The Reason!");
+                                                                                            document.cookie = "reason="+reason;
+                                                                                            var problemsure=confirm("are you sure you want to put the person on the problem");
+                                                                                            if(problemsure==true){
+                                                                                                <?php
+                                                                                                echo "window.location.assign('home.php?addid=" . $row['hh'] . "& problem=" . $row['pbl'] . "& household=" . $row['hh'] . "');";
+                                                                                                ?>
+                                                                                            }else{
+                                                                                                alert("Not Added To Problem");
+                                                                                            }
+                                                                                        }
+                                                                                    </script>
+                                                                                    <?php
+                                                                    }
+                                                                    echo " </tr>";
+                                                                    echo "</table>";
+                                                                    if ($_distribuation_state == "done") {
+                                                                        $_distribuation_state == "";
+                                                                    }
                     }
 
                 } else {
@@ -440,39 +457,45 @@ if (isset($_GET['deleteidpbl'])) {
                     // Check if there are rows in the result
                     if ($result->num_rows > 0) {
                         // Start creating the HTML table
-                        echo "<table border='1'><tr><th>ID</th><th>PBL</th><th>HH</th><th>First Name</th><th>Father Name</th><th>Document Number</th><th>Location</th><th>Address</th><th>Gender</th><th>Phone Number</th><th>Household ID</th><th>Created At</th></tr>";
+                        echo "<table style='color:black; border-radius:5px; ;background-color:white;text-align:center' border='1'><tr><th>Household</th><th>First Name</th><th>Last Name</th><th>Error</th></tr>";
 
                         // Output data of each row
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
                             echo "<td>" . $row["Household Name"] . "</td>";
-                            echo "<td>" . $row["pbl"] . "</td>";
-                            echo "<td>" . $row["hh"] . "</td>";
-                            echo "<td>" . $row["first_name"] . "</td>";
-                            echo "<td>" . $row["father_name"] . "</td>";
-                            echo "<td>" . $row["document_number"] . "</td>";
-                            echo "<td>" . $row["Location"] . "</td>";
-                            echo "<td>" . $row["address"] . "</td>";
-                            echo "<td>" . $row["Gender"] . "</td>";
-                            echo "<td>" . $row["phone_number"] . "</td>";
-                            echo "<td>" . $row["household_id"] . "</td>";
-                            echo "<td>" . $row["created_at"] . "</td>";
+                            echo "<td>" . $row["First Name"] . "</td>";
+                            echo "<td>" . $row["Last Name"] . "</td>";
+                            echo "<td style='font-weight:bold;color:red'>" . $row["Error"] . "</td>";
                             echo "</tr>";
                         }
 
                         // Close the table
                         echo "</table>";
                     } else {
-                        echo "0 results";
+                        $sql = "SELECT * FROM data WHERE hh=$household";
+                        $result = $con->query($sql);
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                // echo '<div class="alert alert-info" role="alert">The Result Found in an Unsupported Location</div>';
+                                echo '<div style="padding: 15px; margin-bottom: 20px; border: 1px solid #bce8f1;
+                             border-radius: 4px; color: #31708f; background-color: #d9edf7; text-align:center;
+                             " role="alert"><b>Name:'
+                                    . $row['first_name'] .
+                                    ', Father Name: '
+                                    . $row['father_name'] .
+                                    '</b> Record is currently <span style="color:red">inActive</span> </div>';
+                            }
+                        } else {
+                            echo '<div style="width:90%;margin:auto; border-radius:4px; box-shadow:3px 3px 3px rgba(0,0,0,0.3) ; background-color:red; color:white; padding:1vh 2vh; text-align:center;font-weight:bolder">No matching record found . . .</div>';
+
+                        }
                     }
 
                     // Close the database connection
-                    $con->close();
-
+        
                     ?>
-                                ?>
-                                <h1>Not Found</h1>
-                                <?php
+                                                        <!-- <h1>Not Found</h1> -->
+                                                        <?php
                 }
             }
         }

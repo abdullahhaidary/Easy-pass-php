@@ -1,5 +1,6 @@
 <?php
-$con=mysqli_connect('localhost','root','Rania@%123123','ochrdb');
+include_once("../dbconnection.php");
+$con=openconnection();
 $date='20'.date('y-m-d');
 $sql="SELECT DISTINCT user_id FROM received";
 $result=$con->query($sql);

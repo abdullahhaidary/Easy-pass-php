@@ -6,16 +6,37 @@
     <title>Dashboard</title>
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="adminResource/plugins/fontawesome-free/css/all.min.css">
+    <!-- <link rel="stylesheet" href="adminResource/plugins/fontawesome-free/css/all.min.css"> -->
     <!-- IonIcons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
     <!-- Theme style -->
     <link rel="stylesheet" href="adminResource/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../css/select2.min.css">
-    <script src="../js/jquery.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="../js/jquery.js"></script>
     <script src="../js/select2.min.js"></script>
+<script src="adminResource/plugins/jquery/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- <link rel="stylesheet" href="../adminResource/plugin/css/select2.min.css"> -->
+    <?php echo isset($additionalStyles) ? $additionalStyles : ''; ?>
+    <?php echo isset($additionalUpperScripts) ? $additionalUpperScripts : ''; ?>
+    <style>
+        .select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: #007bff; /* Change the background color */
+    color: #fff; /* Change the text color */
+    border: 1px solid #204d74; /* Change the border color */
+}
+
+/* Hover state */
+.select2-container .select2-selection--multiple .select2-selection__choice:hover {
+    background-color: #007bff; /* Change the background color on hover */
+    color: #fff; /* Change the text color on hover */
+    cursor:pointer;
+    border: 1px solid #204d74; /* Change the border color on hover */
+}
+    </style>
 </head>
 <!--
 `body` tag options:
