@@ -287,6 +287,10 @@ if (isset($_GET['deleteidpbl'])) {
                             default:
                                 $table_background_string = 'background-color:white;color:black;';
                         }
+                        $pbl = $row['pbl'];
+                        if($pbl>11335){
+                                $table_background_string = 'background-color:blue;color:black;';
+                        }
 
                         $fathername = $row['father_name'];
                         echo "<table border='2' id='tablechanging'  style='
@@ -306,7 +310,6 @@ if (isset($_GET['deleteidpbl'])) {
                                         <tr style='font-size: 14pt'>";
                         $hh = $row['hh'];
                         $location = $row['Location'];
-                        $pbl = $row['pbl'];
                         if ($row['status2'] == 3) {
                             echo "<td style='background-color:red; color:white'> $pbl </td>";
                         } else {
